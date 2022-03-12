@@ -6,3 +6,5 @@
 - jetstream: 2.6
 - tailwindcss
 - laravelvite
+- circleCI
+- ec2 Amazon linux

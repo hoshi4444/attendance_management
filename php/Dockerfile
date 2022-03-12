@@ -2,6 +2,7 @@ FROM php:8.0-apache
 
 RUN apt update \
         && apt install -y \
+            vim \
             g++ \
             libicu-dev \
             libpq-dev \
@@ -12,9 +13,10 @@ RUN apt update \
             intl \
             opcache \
             pdo \
-            pdo_pgsql \
-            pgsql
+            pdo_mysql \
+            mysqli
 
 WORKDIR /var/www/attendance_management
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN a2enmod rewrite
