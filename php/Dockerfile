@@ -9,6 +9,8 @@ RUN apt update \
             libzip-dev \
             zip \
             zlib1g-dev \
+            nodejs \
+            npm \
         && docker-php-ext-install \
             intl \
             opcache \
