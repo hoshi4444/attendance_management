@@ -12,7 +12,7 @@ class Work extends Model
     protected $fillable = [
         'user_id',
         'work_type_id',
-        'stamp',
+        'on_date',
     ];
 
     public function user() {
@@ -21,5 +21,9 @@ class Work extends Model
 
     public function work_type() {
         return $this->belongsTo(WorkType::class);
+    }
+
+    public function work_stamps() {
+        return $this->hasMany(WorkStamp::class);
     }
 }
