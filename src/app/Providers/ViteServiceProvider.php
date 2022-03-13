@@ -30,7 +30,7 @@ class ViteServiceProvider extends ServiceProvider
         Blade::directive('vite', function () {
             if (App::isLocal()) {
                 return new HtmlString(<<<HTML
-                <script type="module" src="http://localhost:3000/resources/js/app.js"></script>
+                <script type="module" src="http://localhost:3000/resources/js/app.ts"></script>
             HTML);
             } else {
                 $manifest = json_decode(File::get(public_path('dist/manifest.json')), true);
@@ -45,10 +45,10 @@ class ViteServiceProvider extends ServiceProvider
     }
 
     private function getAppJs(array $manifest) {
-        return $manifest['resources/js/app.js']['file'];
+        return $manifest['resources/js/app.ts']['file'];
     }
 
     private function getAppCss(array $manifest) {
-        return $manifest['resources/js/app.js']['css'][0];
+        return $manifest['resources/js/app.ts']['css'][0];
     }
 }
