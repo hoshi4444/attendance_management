@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\Work;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
-class WorkSeeder extends Seeder
+class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,8 +16,9 @@ class WorkSeeder extends Seeder
      */
     public function run()
     {
-        Work::factory()
-            ->count(100)
-            ->create();
+        User::factory()
+                ->count(10)
+                ->withPersonalTeam()
+                ->create();
     }
 }

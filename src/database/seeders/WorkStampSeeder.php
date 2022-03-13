@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Work;
+use App\Models\WorkStamp;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class WorkSeeder extends Seeder
+class WorkStampSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,8 +15,8 @@ class WorkSeeder extends Seeder
      */
     public function run()
     {
-        Work::factory()
-            ->count(100)
+        WorkStamp::factory()
+            ->count(1000)
             ->create();
     }
 }

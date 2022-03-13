@@ -17,7 +17,9 @@ class WorkFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'user_id' => $this->faker->numberBetween(1, 10),
+            'work_type_id' => $this->faker->numberBetween(1, 5),
+            'on_date' => $this->faker->dateTimeBetween('- 1 month', 'now'),
         ];
     }
 }
