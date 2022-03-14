@@ -19,9 +19,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             WorkTypeSeeder::class,
             CurrentUserSeeder::class,
-            UserSeeder::class,
-            WorkSeeder::class,
-            WorkStampSeeder::class,
+            // UserSeeder::class,
+            // WorkSeeder::class,
+            // WorkStampSeeder::class,
         ]);
     }
 }

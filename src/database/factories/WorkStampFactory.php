@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WorkStampFactory extends Factory
 {
+    // 現在時刻から1時間ずつ加算したデータ
+    static $num = 0;
+
     /**
      * Define the model's default state.
      *
@@ -16,9 +19,10 @@ class WorkStampFactory extends Factory
      */
     public function definition()
     {
+        self::$num++;
         return [
             'work_id' => $this->faker->numberBetween(1, 100),
-            'stamp_at' => $this->faker->dateTimeInInterval('- 12 hour', now()),
+            'stamp_at' => date('H:i:s', strtotime(' + '.self::$num.' hour')),
         ];
     }
 }

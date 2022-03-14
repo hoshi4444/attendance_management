@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 
 class CurrentUserSeeder extends Seeder
 {
+    static $work_day = 0;
+
     /**
      * Run the database seeds.
      *
@@ -27,13 +29,13 @@ class CurrentUserSeeder extends Seeder
             ]);
 
         Work::factory()
-            ->state(['user_id' => 1])
-            ->count(100)
+            ->state([
+                'user_id' => 1,
+            ])
+            ->count(30)
+            ->has(
+                WorkStamp::factory()
+            )
             ->create();
-
-        WorkStamp::factory()
-            ->count(1000)
-            ->create();
-
     }
 }

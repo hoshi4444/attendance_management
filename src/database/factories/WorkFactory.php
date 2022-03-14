@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class WorkFactory extends Factory
 {
+    // 今日から -count日 までのデータ
+    static $num = 0;
+
     /**
      * Define the model's default state.
      *
@@ -16,10 +19,11 @@ class WorkFactory extends Factory
      */
     public function definition()
     {
+        self::$num++;
         return [
             'user_id' => $this->faker->numberBetween(1, 10),
             'work_type_id' => $this->faker->numberBetween(1, 5),
-            'on_date' => $this->faker->dateTimeBetween('- 1 month', 'now'),
+            'on_date' => date('Y-m-d', strtotime(' - '.self::$num.' day')),
         ];
     }
 }
