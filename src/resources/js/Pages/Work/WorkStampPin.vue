@@ -1,9 +1,9 @@
 <!-- 打刻時刻のピン -->
 <template>
-    <div v-if="workStamp" class="stamp-board">
+    <div v-if="workStampAt" class="stamp-board" @click="selectStamp()">
         <div class="w-fit">
             <p class="w-full block">{{ stampCaption }}</p>
-            <p>{{ workStamp }}</p>
+            <p>{{ workStampAt }}</p>
         </div>
     </div>
 </template>
@@ -18,8 +18,12 @@ interface Props {
     hourScale: number,
     fifteenMinScale: number
 }
-
+interface Emits {
+    (e: "selectStamp", workStamp: WorkStamp): void
+}
 const props = defineProps<Props>();
+const emits = defineEmits<Emits>();
+
 const hourScale = computed(() => props.hourScale);
 const fifteenMinScale = computed(() => props.fifteenMinScale);
 
@@ -44,7 +48,7 @@ const stampCaption = computed(() => {
 });
 
 // 渡された時間が近かったら時刻を表示する
-const workStamp = computed(() => {
+const workStampAt = computed(() => {
     // 打刻時刻の文字列を桁ごとの数値にする
     const [hour, min, sec]: Array<number> = [...props.workStamp.stamp_at.split(':').map(timeStr => Number(timeStr))];
 
@@ -59,6 +63,13 @@ const workStamp = computed(() => {
         return null;
     }
 })
+
+// スタンプを選択する
+// WorkCardまで飛ばす
+function selectStamp() {
+    console.log("select stamp pin");
+    emits("selectStamp", props.workStamp);
+}
 </script>
 <style scoped>
 .stamp-board {

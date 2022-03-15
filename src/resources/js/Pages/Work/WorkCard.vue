@@ -6,6 +6,10 @@
                 <p>{{ day }}</p>
             </div>
             <div class="left-side-info flex space-x-2">
+                <work-stamp-green-button
+                    :disabled="!selectedStamp"
+                    @click="deleteSelectedStamp()"
+                >Select Delete Stamp!!</work-stamp-green-button>
                 <work-stamp-blue-button @click="createNewStamp()">Push New Stamp!!</work-stamp-blue-button>
                 <work-stamp-red-button :disabled="!newStamp" @click="postNewStamp()">Save New Stamp!</work-stamp-red-button>
             </div>
@@ -13,7 +17,7 @@
 
         <!-- 打刻グラフ -->
         <div class="pt-12 pb-10 px-2">
-            <work-sequence :work="work" />
+            <work-sequence :work="work" @selectStamp="selectStamp" />
         </div>
     </div>
 </template>
@@ -21,8 +25,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import WorkSequence from './WorkSequence.vue';
-import WorkStampBlueButton from './WorkStampBlueButton.vue';
 import WorkStampRedButton from './WorkStampRedButton.vue';
+import WorkStampGreenButton from './WorkStampGreenButton.vue';
+import WorkStampBlueButton from './WorkStampBlueButton.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { DateTime } from "luxon";
 
@@ -30,10 +35,15 @@ interface Props {
     work: Work,
     day: String
 }
-
+interface Emits {
+    (e: "selectStamp", workStamp: WorkStamp): void
+}
 const props = defineProps<Props>();
+const emits = defineEmits<Emits>();
+
 const work = computed(() => props.work);
 const newStamp = ref<WorkStamp | null>(null)
+const selectedStamp = ref<WorkStamp | null>(null);
 
 const form = useForm({
     newStamp: <WorkStamp>{},
@@ -69,5 +79,24 @@ function postNewStamp() {
             alert("エラーが発生しました");
         }
     });
+}
+
+// 削除
+function deleteSelectedStamp() {
+    form.delete(`/work_stamps/${selectedStamp.value}`, {
+        onSuccess: () => {
+            selectedStamp.value = null;
+        },
+        onError: () => {
+            alert("エラーが発生しました");
+        }
+    });
+}
+
+// スタンプを選択する
+// WorkStampPinで発火してSequenceを経由する
+function selectStamp(workStamp: WorkStamp) {
+    console.log("select stamp Card");
+    selectedStamp.value = workStamp;
 }
 </script>

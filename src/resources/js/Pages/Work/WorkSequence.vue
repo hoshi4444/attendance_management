@@ -25,6 +25,7 @@
                         :workStampsLen="workStamps.length"
                         :hourScale="hourScale"
                         :fifteenMinScale="fifteenMinScale"
+                        @selectStamp="selectStamp"
                     />
                 </div>
             </div>
@@ -40,8 +41,11 @@ import { DateTime } from "luxon";
 interface Props {
     work: Work,
 }
-
+interface Emits {
+    (e: "selectStamp", workStamp: WorkStamp): void
+}
 const props = defineProps<Props>();
+const emits = defineEmits<Emits>();
 
 const work = computed(() => props.work);
 const workStamps = computed(() => {
@@ -60,9 +64,12 @@ const workStamps = computed(() => {
             return 1;
         }
     });
-
-    return work.value.work_stamps;
 });
+
+function selectStamp(workStamp: WorkStamp) {
+    console.log("select stamp Sequence");
+    emits("selectStamp", workStamp);
+}
 </script>
 <style scoped>
 .hour-memory {
