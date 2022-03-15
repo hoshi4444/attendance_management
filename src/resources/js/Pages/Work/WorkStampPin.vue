@@ -77,6 +77,7 @@ const workStamp = computed(() => {
 
 .stamp-board:hover {
     transform: scale(120%);
+    z-index: 9999;
 }
 
 .stamp-board:before {
