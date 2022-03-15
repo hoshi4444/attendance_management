@@ -16,13 +16,13 @@
                 v-for="fifteenMinScale in 3"
                 :key="fifteenMinScale"
             >
-                <div v-if="work.work_stamps && work.work_stamps.length">
+                <div v-if="workStamps">
                     <!-- 確実にwork_stampが存在する場合のみ表示される -->
                     <work-stamp-pin
-                        v-for="(workStamp, workStampIdx) in work.work_stamps"
+                        v-for="(workStamp, workStampIdx) in workStamps"
                         :workStamp="workStamp"
                         :workStampIdx="workStampIdx"
-                        :workStampsLen="work.work_stamps.length"
+                        :workStampsLen="workStamps.length"
                         :hourScale="hourScale"
                         :fifteenMinScale="fifteenMinScale"
                     />
@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import WorkStampPin from './WorkStampPin.vue';
+import { DateTime } from "luxon";
 
 interface Props {
     work: Work,
@@ -43,6 +44,25 @@ interface Props {
 const props = defineProps<Props>();
 
 const work = computed(() => props.work);
+const workStamps = computed(() => {
+    if (!work.value.work_stamps) {
+        return null;
+    }
+    if (!work.value.work_stamps.length) {
+        return null
+    }
+
+    // 時刻でソートして返す
+    return work.value.work_stamps.sort((aStamp, bStamp) => {
+        if (DateTime.fromSQL(aStamp.stamp_at) < DateTime.fromSQL(bStamp.stamp_at)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+
+    return work.value.work_stamps;
+});
 </script>
 <style scoped>
 .hour-memory {
