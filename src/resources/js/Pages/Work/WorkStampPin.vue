@@ -41,6 +41,7 @@ const stampCaption = computed(() => {
     // 簡単のため略字
     const wsi = props.workStampIdx;
     const wsl = props.workStampsLen;
+    console.log(wsi, wsl);
 
     // TODO: 後でID式にしてタイプごとのコンポーネントにする
     // TODO: タイプを変更できるとおもろい
@@ -50,7 +51,7 @@ const stampCaption = computed(() => {
     if (wsi == Number(0)) {
         return "WorkStart!";
     }
-    if (wsi == wsl) {
+    if (wsi + Number(1) == wsl) {
         return "WorkEnd!";
     }
     return "Break!";
