@@ -5,17 +5,38 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreWorkRequest;
 use App\Http\Requests\UpdateWorkRequest;
 use App\Models\Work;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
 
 class WorkController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * ユーザーホーム画面
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-        //
+        // 今月の打刻状況を取得
+        $works = Work::with('workStamps')
+                    ->where('user_id', Auth::id())
+                    ->whereMonth('on_date', date('m'))
+                    ->orderByDesc('on_date')
+                    ->get();
+
+        // 日別にグループ化
+        $works_of_days = $works->groupBy('on_date')
+                            ->map(function($work_group){
+                                return $work_group->first();
+                            });
+
+        Log::debug($works_of_days->toArray());
+
+        return Inertia::render('Work/Index',
+            [
+                'works_of_days' => $works_of_days
+            ]);
     }
 
     /**
