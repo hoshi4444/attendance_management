@@ -17,7 +17,7 @@
 
         <!-- 打刻グラフ -->
         <div class="pt-12 pb-10 px-2">
-            <work-sequence :work="work" @selectStamp="selectStamp" />
+            <work-sequence :work="work" :selectedStamp="selectedStamp" @selectStamp="selectStamp" />
         </div>
     </div>
 </template>

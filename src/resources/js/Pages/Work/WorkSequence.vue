@@ -25,6 +25,7 @@
                         :workStampsLen="workStamps.length"
                         :hourScale="hourScale"
                         :fifteenMinScale="fifteenMinScale"
+                        :selectedStamp="selectedStamp"
                         @selectStamp="selectStamp"
                     />
                 </div>
@@ -40,6 +41,7 @@ import { DateTime } from "luxon";
 
 interface Props {
     work: Work,
+    selectedStamp: WorkStamp | null
 }
 interface Emits {
     (e: "selectStamp", workStamp: WorkStamp): void
@@ -65,6 +67,7 @@ const workStamps = computed(() => {
         }
     });
 });
+const selectedStamp = computed(() => props.selectedStamp);
 
 function selectStamp(workStamp: WorkStamp) {
     console.log("select stamp Sequence");

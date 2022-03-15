@@ -1,6 +1,11 @@
 <!-- 打刻時刻のピン -->
 <template>
-    <div v-if="workStampAt" class="stamp-board" @click="selectStamp()">
+    <div
+        v-if="workStampAt"
+        class="stamp-board"
+        :class="{ 'select-stamp-board': isSelected }"
+        @click="selectStamp()"
+    >
         <div class="w-fit">
             <p class="w-full block">{{ stampCaption }}</p>
             <p>{{ workStampAt }}</p>
@@ -17,6 +22,7 @@ interface Props {
     workStampsLen: number,
     hourScale: number,
     fifteenMinScale: number
+    selectedStamp: WorkStamp | null
 }
 interface Emits {
     (e: "selectStamp", workStamp: WorkStamp): void
@@ -24,8 +30,11 @@ interface Emits {
 const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
+const workStamp = computed(() => props.workStamp);
 const hourScale = computed(() => props.hourScale);
 const fifteenMinScale = computed(() => props.fifteenMinScale);
+const selectedStamp = computed(() => props.selectedStamp);
+const isSelected = computed(() => selectedStamp.value && selectedStamp.value.id == workStamp.value.id);
 
 // 当日何番目のスタンプかによって分岐するキャプション
 const stampCaption = computed(() => {
@@ -93,7 +102,7 @@ function selectStamp() {
 
 .stamp-board:before {
     content: "";
-    background-color: white;
+    background-color: inherit;
     position: absolute;
     bottom: -10%;
     left: 20%;
@@ -101,5 +110,13 @@ function selectStamp() {
     width: 50%;
     transform: rotateZ(45deg);
     z-index: -1;
+}
+
+.select-stamp-board {
+    transform: scale(150%);
+    background-color: yellow;
+}
+.select-stamp-board:hover {
+    transform: scale(150%);
 }
 </style>
