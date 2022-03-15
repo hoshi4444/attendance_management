@@ -10,6 +10,7 @@ class WorkStamp extends Model
     use HasFactory;
 
     protected $fillable = [
+        'work_id',
         'stamp_at'
     ];
 

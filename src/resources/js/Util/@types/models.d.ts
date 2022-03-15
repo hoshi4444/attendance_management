@@ -1,6 +1,7 @@
 // DBのモデルはここに書く
 interface WorkStamp {
     id: number;
+    work_id: number;
     stamp_at: string;
     created_at: string;
     updated_at: string;
