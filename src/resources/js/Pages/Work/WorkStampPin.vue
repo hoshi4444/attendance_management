@@ -31,6 +31,9 @@ const stampCaption = computed(() => {
 
     // TODO: 後でID式にしてタイプごとのコンポーネントにする
     // TODO: タイプを変更できるとおもろい
+    if (props.workStamp.id == Number(0)) {
+        return "It's New Stamp!";
+    }
     if (wsi == Number(0)) {
         return "WorkStart!";
     }
@@ -59,6 +62,7 @@ const workStamp = computed(() => {
 </script>
 <style scoped>
 .stamp-board {
+    inline-size: max-content;
     text-align: center;
     padding: 0.5rem;
     background-color: white;
@@ -67,8 +71,7 @@ const workStamp = computed(() => {
     z-index: 10;
     top: -7rem;
     position: absolute;
-    top: -600%;
-    left: 50%;
+    left: -4.5vw;
     transform-origin: bottom;
 }
 

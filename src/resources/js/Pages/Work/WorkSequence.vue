@@ -5,10 +5,10 @@
         <!-- 時刻メモリ -->
         <div
             class="flex items-end justify-around px-2 border-l-2 cursor-pointer border-white h-8 w-1/12 relative"
-            v-for="hourScale in 24"
+            v-for="hourScale in Array(24).keys()"
             :key="hourScale"
         >
-            <p class="absolute -top-12 -left-3">{{ hourScale }}時</p>
+            <p class="hour-memory">{{ hourScale }}</p>
 
             <!--  15分間隔メモリ -->
             <div
@@ -44,3 +44,11 @@ const props = defineProps<Props>();
 
 const work = computed(() => props.work);
 </script>
+<style scoped>
+.hour-memory {
+    position: absolute;
+    top: 2.25rem;
+    left: -0.75rem;
+    color: #555;
+}
+</style>
