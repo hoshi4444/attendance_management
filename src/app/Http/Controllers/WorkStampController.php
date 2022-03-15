@@ -42,8 +42,9 @@ class WorkStampController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(WorkStamp $work_stamp)
     {
-        //
+        $work_stamp->delete();
+        return back();
     }
 }

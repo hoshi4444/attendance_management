@@ -6,12 +6,15 @@
                 <p>{{ day }}</p>
             </div>
             <div class="left-side-info flex space-x-2">
-                <work-stamp-green-button
+                <work-stamp-red-button
                     :disabled="!selectedStamp"
                     @click="deleteSelectedStamp()"
-                >Select Delete Stamp!!</work-stamp-green-button>
+                >Select Delete Stamp!!</work-stamp-red-button>
                 <work-stamp-blue-button @click="createNewStamp()">Push New Stamp!!</work-stamp-blue-button>
-                <work-stamp-red-button :disabled="!newStamp" @click="postNewStamp()">Save New Stamp!</work-stamp-red-button>
+                <work-stamp-green-button
+                    :disabled="!newStamp"
+                    @click="postNewStamp()"
+                >Save New Stamp!</work-stamp-green-button>
             </div>
         </div>
 
@@ -35,11 +38,7 @@ interface Props {
     work: Work,
     day: String
 }
-interface Emits {
-    (e: "selectStamp", workStamp: WorkStamp): void
-}
 const props = defineProps<Props>();
-const emits = defineEmits<Emits>();
 
 const work = computed(() => props.work);
 const newStamp = ref<WorkStamp | null>(null)
@@ -83,7 +82,7 @@ function postNewStamp() {
 
 // 削除
 function deleteSelectedStamp() {
-    form.delete(`/work_stamps/${selectedStamp.value}`, {
+    form.delete(`/work_stamps/${selectedStamp.value!.id}`, {
         onSuccess: () => {
             selectedStamp.value = null;
         },
