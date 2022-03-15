@@ -12,9 +12,14 @@
                     v-for="(work, day) in worksOfDays"
                     :key="day"
                 >
-                    <!-- 打刻日 -->
-                    <div class="border-b-2 border-gray-300">
-                        <p>{{ day }}</p>
+                    <!-- 打刻日情報 -->
+                    <div class="flex justify-between border-b-2 py-2 border-gray-300">
+                        <div class="right-side-info">
+                            <p>{{ day }}</p>
+                        </div>
+                        <div class="left-side-info">
+                            <work-stamp-button @click="WorkTimeStamp()">Stamp Now Time!!</work-stamp-button>
+                        </div>
                     </div>
                     <div class="py-2">
                         <work-sequence :work="work" />
@@ -33,6 +38,7 @@
 import { computed } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import WorkSequence from './WorkSequence.vue';
+import WorkStampButton from './WorkStampButton.vue';
 
 interface Props {
     works_of_days: {
