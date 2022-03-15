@@ -19,11 +19,11 @@ class Work extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function work_type() {
+    public function workType() {
         return $this->belongsTo(WorkType::class);
     }
 
-    public function work_stamps() {
+    public function workStamps() {
         return $this->hasMany(WorkStamp::class);
     }
 }
