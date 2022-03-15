@@ -12,7 +12,16 @@
     padding: 3px 5px;
 }
 
-.work-time-stamp-btn:hover {
+.work-time-stamp-btn:disabled {
+    font-weight: bold;
+    color: rgba(0, 0, 255, 0.418);
+    border-left: 5px solid rgba(0, 0, 255, 0.418);
+    border-right: 5px solid rgba(0, 0, 255, 0);
+    padding: 3px 5px;
+    background-color: rgb(151, 151, 151);
+}
+
+.work-time-stamp-btn:hover:not([disabled]) {
     animation: slide-bg 0.5s ease-in forwards;
 }
 
