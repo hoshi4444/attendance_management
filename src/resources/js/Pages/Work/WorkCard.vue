@@ -93,9 +93,15 @@ function deleteSelectedStamp() {
 }
 
 // スタンプを選択する
+// 同じスタンプが渡されたら解除する
 // WorkStampPinで発火してSequenceを経由する
 function selectStamp(workStamp: WorkStamp) {
     console.log("select stamp Card");
-    selectedStamp.value = workStamp;
+    if (selectedStamp.value && selectedStamp.value.id == workStamp.id) {
+        console.log("select clear");
+        selectedStamp.value = null;
+    } else {
+        selectedStamp.value = workStamp;
+    }
 }
 </script>
