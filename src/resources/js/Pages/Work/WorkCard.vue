@@ -7,10 +7,16 @@
             </div>
             <div class="left-side-info flex space-x-2">
                 <work-stamp-red-button
+                    v-if="selectedStamp && selectedStamp.id === 0"
+                    :disabled="!selectedStamp"
+                    @click="clearSelectedNewStamp()"
+                >Clear New Stamp!</work-stamp-red-button>
+                <work-stamp-red-button
+                    v-else
                     :disabled="!selectedStamp"
                     @click="deleteSelectedStamp()"
-                >Select Delete Stamp!!</work-stamp-red-button>
-                <work-stamp-blue-button @click="createNewStamp()">Push New Stamp!!</work-stamp-blue-button>
+                >Delete Select Stamp!!</work-stamp-red-button>
+                <work-stamp-blue-button @click="pushNewStamp()">Push New Stamp!!</work-stamp-blue-button>
                 <work-stamp-green-button
                     :disabled="!newStamp"
                     @click="postNewStamp()"
@@ -51,7 +57,7 @@ const form = useForm({
 // 現在時刻のスタンプを追加
 // TODO: 選択した日付の時刻を入力するため、午前0時移行だと失敗する
 // TODO: 午前0時になったらリロードする処理が必要
-function createNewStamp() {
+function pushNewStamp() {
     newStamp.value = {
         id: 0,
         work_id: work.value.id,
@@ -60,10 +66,8 @@ function createNewStamp() {
         updated_at: "",
     };
 
-    const newStampIdx = work.value.work_stamps.findIndex(stamp => stamp.id == 0);
-    if (newStampIdx != -1) {
-        work.value.work_stamps.splice(newStampIdx, 1);
-    }
+    // 新しいスタンプは1人で良い…
+    clearNewStamp();
 
     work.value.work_stamps.push(newStamp.value);
 }
@@ -91,6 +95,21 @@ function deleteSelectedStamp() {
         }
     });
 }
+
+// 新しいスタンプをクリア
+function clearNewStamp() {
+    const newStampIdx = work.value.work_stamps.findIndex(stamp => stamp.id == 0);
+    if (newStampIdx != -1) {
+        work.value.work_stamps.splice(newStampIdx, 1);
+    }
+}
+
+// 選択中の新しいスタンプをクリア
+function clearSelectedNewStamp() {
+    selectStamp(selectedStamp.value!);
+    clearNewStamp();
+}
+
 
 // スタンプを選択する
 // 同じスタンプが渡されたら解除する
