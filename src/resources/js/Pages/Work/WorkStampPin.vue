@@ -90,14 +90,16 @@ function selectStamp() {
     border-width: 2px;
     border-radius: 0.375rem;
     z-index: 10;
-    top: -7rem;
     position: absolute;
-    left: -4.5vw;
-    transform-origin: bottom;
+    top: -120%;
+    left: 0%;
+    transform: translate(-50%, 0);
+    transform-origin: bottom left;
+    cursor: pointer;
 }
 
 .stamp-board:hover {
-    transform: scale(120%);
+    transform: scale(120%) translate(-50%, 0);
     z-index: 9999;
 }
 
@@ -114,10 +116,10 @@ function selectStamp() {
 }
 
 .select-stamp-board {
-    transform: scale(150%);
+    transform: scale(150%) translate(-50%, 0);
     background-color: yellow;
 }
 .select-stamp-board:hover {
-    transform: scale(150%);
+    transform: scale(150%) translate(-50%, 0);
 }
 </style>
