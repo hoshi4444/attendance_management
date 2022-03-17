@@ -24,7 +24,7 @@
                 </div>
             </div>
 
-            <!-- 通常時 -->
+            <!-- 通常時か新しいスタンプの場合 -->
             <div v-if="!isChangedStamp" class="text-xs my-1">
                 <div class="flex justify-between">
                     <p>Stamp At:</p>
@@ -64,7 +64,9 @@ const DATE_MINUTES = Number(24) * Number(60);
 // flags
 const isMouseDown = ref<Boolean>(false);
 const isSelected = computed(() => selectedStamp.value && selectedStamp.value.id == workStamp.value.id);
-const isChangedStamp = computed(() => workStamp.value.stamp_at != workStampAt.value)
+const isChangedStamp = computed(() => {
+    return workStamp.value.id != 0 && workStamp.value.stamp_at != workStampAt.value
+})
 
 // elms
 const stampBoardElm = ref<HTMLDivElement | null>(null);

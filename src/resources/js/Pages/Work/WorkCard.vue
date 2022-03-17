@@ -22,14 +22,14 @@
                 >Save New Stamp!!</work-stamp-green-button>
                 <!-- 時間の変更を保存 -->
                 <work-stamp-green-button
-                    :disabled="!selectedStamp"
+                    :disabled="isNotSelectedStampOrSelectedNewStamp"
                     @click="updateSelectedStamp()"
                 >Save Change Stamp At!!</work-stamp-green-button>
                 <!-- 全てのスタンプの状態を変更前に戻す -->
                 <work-stamp-green-button @click="resetStamps()">Reset All Stamps!!</work-stamp-green-button>
                 <!-- 削除 -->
                 <work-stamp-red-button
-                    :disabled="!selectedStamp"
+                    :disabled="isNotSelectedStampOrSelectedNewStamp"
                     @click="deleteSelectedStamp()"
                 >Delete Select Stamp!!</work-stamp-red-button>
             </div>
@@ -96,6 +96,7 @@ const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
 
 // flags
 const isReset = ref<Boolean>(false);
+const isNotSelectedStampOrSelectedNewStamp = computed(() => !selectedStamp.value || selectedStamp.value.id == 0)
 
 // elms
 const workSequence = ref<typeof WorkSequence | null>(null);
@@ -108,11 +109,18 @@ const sequenceElm = computed(() => {
 // API Requests -------------------------------------------------
 // 打刻
 function postNewStamp() {
+    if (!newStamp.value) return;
     const form = useForm({
         newStamp: <WorkStamp>{},
     });
 
-    form.newStamp = newStamp.value!
+    // 更新されてたら更新する
+    const updatedNewStamp = updateStamps.value[0];
+    if (updatedNewStamp) {
+        newStamp.value.stamp_at = updatedNewStamp.stamp_at;
+    }
+
+    form.newStamp = newStamp.value
 
     form.post('/work_stamps', {
         onSuccess: () => newStamp.value = null,
@@ -162,6 +170,7 @@ function pushNewStamp() {
     // 新しいスタンプは1人で良い…
     clearNewStamp();
 
+    // スタンプを追加
     newStamp.value = {
         id: 0,
         work_id: work.value.id,
@@ -172,6 +181,7 @@ function pushNewStamp() {
 
     workStamps.value.push(newStamp.value);
 }
+
 // 新しいスタンプをクリア
 function clearNewStamp() {
     const newStampIdx = work.value.work_stamps.findIndex(stamp => stamp.id == 0);
