@@ -3,17 +3,34 @@
     <div
         ref="stampBoardElm"
         class="stamp-board"
-        :class="{ 'select-stamp-board': isSelected }"
+        :class="{ 'select-stamp-board': isSelected, 'changed-stamp-board': isChangedStamp }"
         :style="`left: ${setLeftPosition}%`"
         @click="setSelectStamp()"
         @mousedown.prevent="mouseDown()"
         @mouseup.prevent="mouseUp()"
-        @mouseout="mouseUp()"
         @mousemove.prevent="moveOnHorizon($event)"
     >
-        <div class="w-fit">
-            <p class="w-full block">{{ stampCaption }}</p>
-            <p>{{ workStampAt }}</p>
+        <div>
+            <p class="w-full text-sm">{{ stampCaption }}</p>
+            <!-- 更新時 -->
+            <div v-if="isChangedStamp" class="text-xs my-1">
+                <div class="flex justify-between">
+                    <p>Origin At:</p>
+                    <p>{{ originWorkStampAt }}</p>
+                </div>
+                <div class="flex justify-between">
+                    <p>New At:</p>
+                    <p>{{ workStampAt }}</p>
+                </div>
+            </div>
+
+            <!-- 通常時 -->
+            <div v-if="!isChangedStamp" class="text-xs my-1">
+                <div class="flex justify-between">
+                    <p>Stamp At:</p>
+                    <p>{{ workStampAt }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -29,19 +46,23 @@ interface Props {
     sequenceElm: HTMLDivElement | null
 }
 interface Emits {
-    (e: "selectStamp", workStamp: WorkStamp): void
+    (e: "setSelectStamp", workStamp: WorkStamp): void
+    (e: "setUpdateStamp", workStamp: WorkStamp): void
 }
 const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
 
 const workStamp = computed(() => props.workStamp);
 const workStampAt = ref(props.workStamp.stamp_at);
+const originWorkStampAt = ref(props.workStamp.stamp_at);
 const selectedStamp = computed(() => props.selectedStamp);
 const isSelected = computed(() => selectedStamp.value && selectedStamp.value.id == workStamp.value.id);
 const sequenceElm = computed(() => props.sequenceElm);
 const oneDateMin = Number(24) * Number(60);
 const isMouseDown = ref<Boolean>(false);
 const stampBoardElm = ref<HTMLDivElement | null>(null);
+const isChangedStamp = computed(() => workStamp.value.stamp_at != workStampAt.value)
+const updateStamp = ref<WorkStamp | null>(null);
 
 // 時刻に合わせて左辺の位置を設定する
 const setLeftPosition = computed(() => {
@@ -54,13 +75,11 @@ const setLeftPosition = computed(() => {
     return stampAtPercentage;
 });
 
-
 // 当日何番目のスタンプかによって分岐するキャプション
 const stampCaption = computed(() => {
     // 簡単のため略字
     const wsi = props.workStampIdx;
     const wsl = props.workStampsLen;
-    console.log(wsi, wsl);
 
     // TODO: 後でID式にしてタイプごとのコンポーネントにする
     // TODO: タイプを変更できるとおもろい
@@ -96,6 +115,11 @@ function mouseDown() {
 function mouseUp() {
     console.log("mouse up");
     isMouseDown.value = false;
+
+    // 更新を通知
+    updateStamp.value = { ...workStamp.value };
+    updateStamp.value.stamp_at = workStampAt.value;
+    setUpdateStamp();
 }
 
 // initLeft ~ (100 - initLeft)間隔でスタンプを水平に動かす
@@ -129,8 +153,8 @@ function moveOnHorizon(event: MouseEvent) {
 
 // 位置のパーセンテージを逆算して時間の文字列にして返す
 function convertPositionPercentageToStampAtStr(positionPercentage: number) {
-    if (positionPercentage < 0) return "00:00";
-    if (positionPercentage >= 100) return "23:59";
+    if (positionPercentage < 0) return "00:00:00";
+    if (positionPercentage >= 100) return "23:59:00";
 
     // 分数に直す
     let newMin = Math.floor(oneDateMin * (positionPercentage / 100));
@@ -148,7 +172,7 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
 
     const zeroPadHour = String(newHour).padStart(2, "0");
     const zeroPadMin = String(newMin).padStart(2, "0");
-    return `${zeroPadHour}:${zeroPadMin}`;
+    return `${zeroPadHour}:${zeroPadMin}:00`;
 }
 </script>
 <style scoped>
@@ -157,7 +181,6 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     text-align: center;
     padding: 0.5rem;
     background-color: white;
-    border-width: 2px;
     border-radius: 0.375rem;
     z-index: 10;
     position: absolute;
@@ -166,30 +189,27 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     transform: translate(-50%, 0);
     transform-origin: bottom left;
     cursor: pointer;
-}
-
-.stamp-board:hover {
-    transform: scale(120%) translate(-50%, 0);
-    z-index: 9999;
+    width: 12%;
+    border-width: 2px;
 }
 
 .stamp-board:before {
     content: "";
     background-color: inherit;
     position: absolute;
-    bottom: -10%;
+    bottom: 0%;
     left: 20%;
     height: 50%;
     width: 50%;
     transform: rotateZ(45deg);
-    z-index: -1;
+    z-index: -99;
 }
 
 .select-stamp-board {
-    transform: scale(150%) translate(-50%, 0);
     background-color: yellow;
 }
-.select-stamp-board:hover {
-    transform: scale(150%) translate(-50%, 0);
+
+.changed-stamp-board {
+    top: -8vh;
 }
 </style>

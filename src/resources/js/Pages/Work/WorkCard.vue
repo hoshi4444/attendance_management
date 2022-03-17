@@ -1,26 +1,36 @@
 <template>
-    <div class="bg-white space-y-2 p-2 shadow-xl">
+    <div class="card-bg space-y-2 p-2 shadow-xl">
         <!-- 打刻日情報 -->
         <div class="flex justify-between border-b-2 py-2 border-gray-300">
+            <!-- 左端 -->
             <div class="right-side-info">
                 <p>{{ day }}</p>
             </div>
+
+            <!-- 右端のボタン群 -->
             <div class="left-side-info flex space-x-2">
+                <work-stamp-blue-button @click="pushNewStamp()">Push New Stamp!!</work-stamp-blue-button>
+                <!-- 新しいスタンプを作成 -->
+                <work-stamp-green-button
+                    :disabled="!newStamp"
+                    @click="postNewStamp()"
+                >Save New Stamp!!</work-stamp-green-button>
+                <!-- 時間の変更を保存 -->
+                <work-stamp-green-button
+                    :disabled="!selectedStamp"
+                    @click="updateSelectedStamp()"
+                >Save Change Stamp At!!</work-stamp-green-button>
+                <!-- 削除 -->
                 <work-stamp-red-button
                     v-if="selectedStamp && selectedStamp.id === 0"
                     :disabled="!selectedStamp"
                     @click="clearSelectedNewStamp()"
-                >Clear New Stamp!</work-stamp-red-button>
+                >Clear New Stamp!!</work-stamp-red-button>
                 <work-stamp-red-button
                     v-else
                     :disabled="!selectedStamp"
                     @click="deleteSelectedStamp()"
                 >Delete Select Stamp!!</work-stamp-red-button>
-                <work-stamp-blue-button @click="pushNewStamp()">Push New Stamp!!</work-stamp-blue-button>
-                <work-stamp-green-button
-                    :disabled="!newStamp"
-                    @click="postNewStamp()"
-                >Save New Stamp!</work-stamp-green-button>
             </div>
         </div>
 
@@ -54,9 +64,12 @@ const props = defineProps<Props>();
 const work = computed(() => props.work);
 const newStamp = ref<WorkStamp | null>(null)
 const selectedStamp = ref<WorkStamp | null>(null);
+// 更新したスタンプ・一意にするためIDをキーのオブジェクトにする
+const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
 
 const form = useForm({
     newStamp: <WorkStamp>{},
+    updateStamp: <WorkStamp>{},
 });
 
 // 現在時刻のスタンプを追加
@@ -89,6 +102,21 @@ function postNewStamp() {
     });
 }
 
+// 打刻時刻更新
+function updateSelectedStamp() {
+    form.updateStamp = updateStamps.value![selectedStamp.value!.id];
+
+    form.put(`/work_stamps/${form.updateStamp.id}`, {
+        onSuccess: () => {
+            setSelectStamp(form.updateStamp);
+            clearUpdateStamps();
+        },
+        onError: () => {
+            alert("エラーが発生しました");
+        }
+    });
+}
+
 // 削除
 function deleteSelectedStamp() {
     form.delete(`/work_stamps/${selectedStamp.value!.id}`, {
@@ -115,6 +143,10 @@ function clearSelectedNewStamp() {
     clearNewStamp();
 }
 
+// スタンプの更新をクリア
+function clearUpdateStamps() {
+    updateStamps.value = {};
+}
 
 // WorkStampPinからSequenceを経由してスタンプ選択の通知を受け取る
 // 同じスタンプが渡されたら解除する
