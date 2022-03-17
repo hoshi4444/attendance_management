@@ -38,6 +38,7 @@
 <script lang="ts" setup>
 import { computed, ref, watchEffect } from 'vue';
 
+// props  --------------------------------------------------------
 interface Props {
     workStamp: WorkStamp,
     workStampIdx: number,
@@ -45,32 +46,38 @@ interface Props {
     selectedStamp: WorkStamp | null,
     sequenceElm: HTMLDivElement | null,
 }
-interface Emits {
-    (e: "setSelectStamp", workStamp: WorkStamp): void
-    (e: "setUpdateStamp", workStamp: WorkStamp): void
-}
 const props = defineProps<Props>();
-const emits = defineEmits<Emits>();
 
 const workStamp = computed(() => props.workStamp);
+const selectedStamp = computed(() => props.selectedStamp);
+const sequenceElm = computed(() => props.sequenceElm);
+
+
+// vars  --------------------------------------------------------
 const workStampAt = ref(props.workStamp.stamp_at);
 const originWorkStampAt = ref(props.workStamp.stamp_at);
-const selectedStamp = computed(() => props.selectedStamp);
-const isSelected = computed(() => selectedStamp.value && selectedStamp.value.id == workStamp.value.id);
-const sequenceElm = computed(() => props.sequenceElm);
-const oneDateMin = Number(24) * Number(60);
-const isMouseDown = ref<Boolean>(false);
-const stampBoardElm = ref<HTMLDivElement | null>(null);
-const isChangedStamp = computed(() => workStamp.value.stamp_at != workStampAt.value)
 const updateStamp = ref<WorkStamp | null>(null);
 
+// const
+const DATE_MINUTES = Number(24) * Number(60);
+
+// flags
+const isMouseDown = ref<Boolean>(false);
+const isSelected = computed(() => selectedStamp.value && selectedStamp.value.id == workStamp.value.id);
+const isChangedStamp = computed(() => workStamp.value.stamp_at != workStampAt.value)
+
+// elms
+const stampBoardElm = ref<HTMLDivElement | null>(null);
+
+
+// functions  --------------------------------------------------------
 // 時刻に合わせて左辺の位置を設定する
 const setLeftPosition = computed(() => {
     // スタンプ時刻が1日の全分数:1440分の内、何%か求める
     // 例:) 12:35 => 755 / 1440 = 52%
     const [hour, min, sec] = [...workStamp.value.stamp_at.split(":").map(timeStr => Number(timeStr))];
     const workStampAtToMin = hour * Number(60) + min;
-    const stampAtPercentage = Math.floor((workStampAtToMin / oneDateMin) * 100);
+    const stampAtPercentage = Math.floor((workStampAtToMin / DATE_MINUTES) * 100);
 
     return stampAtPercentage;
 });
@@ -95,25 +102,11 @@ const stampCaption = computed(() => {
     return "Break!";
 });
 
-// スタンプの選択をWorkCardに通知する
-function setSelectStamp() {
-    console.log("select stamp pin");
-    emits("setSelectStamp", props.workStamp);
-}
-
-// スタンプの更新をWorkCardに通知する
-function setUpdateStamp() {
-    console.log("update stamp pin");
-    emits("setUpdateStamp", updateStamp.value!);
-}
-
 function mouseDown() {
-    console.log("mouse donn");
     isMouseDown.value = true;
 }
 
 function mouseUp() {
-    console.log("mouse up");
     isMouseDown.value = false;
 
     // 更新を通知
@@ -122,7 +115,7 @@ function mouseUp() {
     setUpdateStamp();
 }
 
-// initLeft ~ (100 - initLeft)間隔でスタンプを水平に動かす
+// スタンプをグラフ上で水平に動かす
 function moveOnHorizon(event: MouseEvent) {
     watchEffect(() => {
         if (!event) return;
@@ -157,7 +150,7 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     if (positionPercentage >= 100) return "23:59:00";
 
     // 分数に直す
-    let newMin = Math.floor(oneDateMin * (positionPercentage / 100));
+    let newMin = Math.floor(DATE_MINUTES * (positionPercentage / 100));
 
     // 時間と分にする
     let newHour = Number(0);
@@ -173,6 +166,24 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     const zeroPadHour = String(newHour).padStart(2, "0");
     const zeroPadMin = String(newMin).padStart(2, "0");
     return `${zeroPadHour}:${zeroPadMin}:00`;
+}
+
+
+// emits  --------------------------------------------------------
+interface Emits {
+    (e: "setSelectStamp", workStamp: WorkStamp): void
+    (e: "setUpdateStamp", workStamp: WorkStamp): void
+}
+const emits = defineEmits<Emits>();
+
+// スタンプの選択をWorkCardに通知する
+function setSelectStamp() {
+    emits("setSelectStamp", props.workStamp);
+}
+
+// スタンプの更新をWorkCardに通知する
+function setUpdateStamp() {
+    emits("setUpdateStamp", updateStamp.value!);
 }
 </script>
 <style scoped>

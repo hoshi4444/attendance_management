@@ -69,7 +69,7 @@ import WorkStampBlueButton from './WorkStampBlueButton.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { DateTime } from "luxon";
 
-// props
+// props  --------------------------------------------------------
 interface Props {
     work: Work,
     day: String
@@ -87,43 +87,31 @@ const workStamps = computed(() => {
     });
 });
 
-// vars
+
+// vars --------------------------------------------------------
 const newStamp = ref<WorkStamp | null>(null);
 const selectedStamp = ref<WorkStamp | null>(null);
 // 更新したスタンプ・一意にするためIDをキーのオブジェクトにする
 const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
+
+// flags
+const isReset = ref<Boolean>(false);
+
+// elms
 const workSequence = ref<typeof WorkSequence | null>(null);
 const sequenceElm = computed(() => {
     if (!workSequence.value) return;
     return workSequence.value.sequenceElm;
 });
-const isReset = ref<Boolean>(false);
 
-const form = useForm({
-    newStamp: <WorkStamp>{},
-    updateStamp: <WorkStamp>{},
-});
 
-// 現在時刻のスタンプを追加
-// TODO: 選択した日付の時刻を入力するため、午前0時移行だと失敗する
-// TODO: 午前0時になったらリロードする処理が必要
-function pushNewStamp() {
-    // 新しいスタンプは1人で良い…
-    clearNewStamp();
-
-    newStamp.value = {
-        id: 0,
-        work_id: work.value.id,
-        stamp_at: DateTime.now().toFormat('H:m:s'),
-        created_at: "",
-        updated_at: "",
-    };
-
-    workStamps.value.push(newStamp.value);
-}
-
+// API Requests -------------------------------------------------
 // 打刻
 function postNewStamp() {
+    const form = useForm({
+        newStamp: <WorkStamp>{},
+    });
+
     form.newStamp = newStamp.value!
 
     form.post('/work_stamps', {
@@ -136,6 +124,10 @@ function postNewStamp() {
 
 // 打刻時刻更新
 function updateSelectedStamp() {
+    const form = useForm({
+        updateStamp: <WorkStamp>{},
+    });
+
     form.updateStamp = updateStamps.value![selectedStamp.value!.id];
 
     form.put(`/work_stamps/${form.updateStamp.id}`, {
@@ -151,6 +143,8 @@ function updateSelectedStamp() {
 
 // 削除
 function deleteSelectedStamp() {
+    const form = useForm({});
+
     form.delete(`/work_stamps/${selectedStamp.value!.id}`, {
         onSuccess: () => {
             selectedStamp.value = null;
@@ -161,6 +155,23 @@ function deleteSelectedStamp() {
     });
 }
 
+
+// functions --------------------------------------------------------
+// 現在時刻のスタンプを追加
+function pushNewStamp() {
+    // 新しいスタンプは1人で良い…
+    clearNewStamp();
+
+    newStamp.value = {
+        id: 0,
+        work_id: work.value.id,
+        stamp_at: DateTime.now().toFormat('H:m:s'),
+        created_at: "",
+        updated_at: "",
+    };
+
+    workStamps.value.push(newStamp.value);
+}
 // 新しいスタンプをクリア
 function clearNewStamp() {
     const newStampIdx = work.value.work_stamps.findIndex(stamp => stamp.id == 0);
@@ -171,12 +182,10 @@ function clearNewStamp() {
     newStamp.value = null;
 }
 
-
 // スタンプの更新をクリア
 function clearUpdateStamps() {
     updateStamps.value = {};
 }
-
 
 // 一瞬非表示にして再描画する
 async function resetStamps() {
@@ -185,12 +194,12 @@ async function resetStamps() {
     isReset.value = false;
 }
 
+
+// emits --------------------------------------------------------
 // WorkStampからスタンプ選択の通知を受け取る
 // 同じスタンプが渡されたら解除する
 function setSelectStamp(selectStamp: WorkStamp) {
-    console.log("Select Stamp Card");
     if (selectedStamp.value && selectedStamp.value.id == selectStamp.id) {
-        console.log("Select Clear");
         selectedStamp.value = null;
     } else {
         selectedStamp.value = selectStamp;
@@ -200,7 +209,6 @@ function setSelectStamp(selectStamp: WorkStamp) {
 // WorkStampからスタンプ更新の通知を受け取る
 // オブジェクトに格納する
 function setUpdateStamp(updateStamp: WorkStamp) {
-    console.log("Update Stamp Card");
     const workStampId: number = Number(updateStamp.id);
     updateStamps.value[workStampId] = updateStamp;
 }
