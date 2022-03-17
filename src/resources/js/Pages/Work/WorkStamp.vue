@@ -42,8 +42,8 @@ interface Props {
     workStamp: WorkStamp,
     workStampIdx: number,
     workStampsLen: number,
-    selectedStamp: WorkStamp | null
-    sequenceElm: HTMLDivElement | null
+    selectedStamp: WorkStamp | null,
+    sequenceElm: HTMLDivElement | null,
 }
 interface Emits {
     (e: "setSelectStamp", workStamp: WorkStamp): void
@@ -173,11 +173,6 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     const zeroPadHour = String(newHour).padStart(2, "0");
     const zeroPadMin = String(newMin).padStart(2, "0");
     return `${zeroPadHour}:${zeroPadMin}:00`;
-}
-
-// 時間を元の時間に戻す
-function resetStampAt() {
-
 }
 </script>
 <style scoped>

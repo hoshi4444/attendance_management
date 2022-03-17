@@ -25,6 +25,8 @@
                     :disabled="!selectedStamp"
                     @click="updateSelectedStamp()"
                 >Save Change Stamp At!!</work-stamp-green-button>
+                <!-- 全てのスタンプの状態を変更前に戻す -->
+                <work-stamp-green-button @click="resetStamps()">Reset All Stamps!!</work-stamp-green-button>
                 <!-- 削除 -->
                 <work-stamp-red-button
                     :disabled="!selectedStamp"
@@ -38,7 +40,7 @@
             <work-sequence ref="workSequence">
                 <template #workStamps>
                     <!-- 打刻スタンプ -->
-                    <div v-if="workStamps">
+                    <div v-if="workStamps && !isReset">
                         <work-stamp
                             v-for="(workStamp, workStampIdx) in workStamps"
                             :key="workStamp.id"
@@ -49,7 +51,6 @@
                             :sequenceElm="sequenceElm"
                             @setSelectStamp="setSelectStamp"
                             @setUpdateStamp="setUpdateStamp"
-                            @resetStamp="resetStamp"
                         />
                     </div>
                 </template>
@@ -87,7 +88,7 @@ const workStamps = computed(() => {
 });
 
 // vars
-const newStamp = ref<WorkStamp | null>(null)
+const newStamp = ref<WorkStamp | null>(null);
 const selectedStamp = ref<WorkStamp | null>(null);
 // 更新したスタンプ・一意にするためIDをキーのオブジェクトにする
 const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
@@ -96,7 +97,7 @@ const sequenceElm = computed(() => {
     if (!workSequence.value) return;
     return workSequence.value.sequenceElm;
 });
-
+const isReset = ref<Boolean>(false);
 
 const form = useForm({
     newStamp: <WorkStamp>{},
@@ -176,9 +177,12 @@ function clearUpdateStamps() {
     updateStamps.value = {};
 }
 
-// スタンプをブラウザで変更される前の値に戻す
-function resetStamp() {
 
+// 一瞬非表示にして再描画する
+async function resetStamps() {
+    isReset.value = true;
+    await new Promise(resolve => setTimeout(resolve, 100));
+    isReset.value = false;
 }
 
 // WorkStampからスタンプ選択の通知を受け取る
