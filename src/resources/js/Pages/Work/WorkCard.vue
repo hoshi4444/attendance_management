@@ -60,8 +60,18 @@ interface Props {
     day: String
 }
 const props = defineProps<Props>();
-
 const work = computed(() => props.work);
+const workStamps = computed(() => {
+    // 時刻でソートして返す
+    return work.value.work_stamps.sort((aStamp, bStamp) => {
+        if (DateTime.fromSQL(aStamp.stamp_at) < DateTime.fromSQL(bStamp.stamp_at)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
+});
+
 const newStamp = ref<WorkStamp | null>(null)
 const selectedStamp = ref<WorkStamp | null>(null);
 // 更新したスタンプ・一意にするためIDをキーのオブジェクトにする
@@ -87,7 +97,7 @@ function pushNewStamp() {
     // 新しいスタンプは1人で良い…
     clearNewStamp();
 
-    work.value.work_stamps.push(newStamp.value);
+    workStamps.value.push(newStamp.value);
 }
 
 // 打刻
@@ -133,7 +143,7 @@ function deleteSelectedStamp() {
 function clearNewStamp() {
     const newStampIdx = work.value.work_stamps.findIndex(stamp => stamp.id == 0);
     if (newStampIdx != -1) {
-        work.value.work_stamps.splice(newStampIdx, 1);
+        workStamps.value.splice(newStampIdx, 1);
     }
 }
 
