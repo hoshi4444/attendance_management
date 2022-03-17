@@ -10,6 +10,11 @@
             <!-- 右端のボタン群 -->
             <div class="left-side-info flex space-x-2">
                 <work-stamp-blue-button @click="pushNewStamp()">Push New Stamp!!</work-stamp-blue-button>
+                <!-- 新しいスタンプを削除 -->
+                <work-stamp-red-button
+                    :disabled="!newStamp"
+                    @click="clearNewStamp()"
+                >Clear New Stamp!!</work-stamp-red-button>
                 <!-- 新しいスタンプを作成 -->
                 <work-stamp-green-button
                     :disabled="!newStamp"
@@ -22,12 +27,6 @@
                 >Save Change Stamp At!!</work-stamp-green-button>
                 <!-- 削除 -->
                 <work-stamp-red-button
-                    v-if="selectedStamp && selectedStamp.id === 0"
-                    :disabled="!selectedStamp"
-                    @click="clearSelectedNewStamp()"
-                >Clear New Stamp!!</work-stamp-red-button>
-                <work-stamp-red-button
-                    v-else
                     :disabled="!selectedStamp"
                     @click="deleteSelectedStamp()"
                 >Delete Select Stamp!!</work-stamp-red-button>
@@ -50,6 +49,7 @@
                             :sequenceElm="sequenceElm"
                             @setSelectStamp="setSelectStamp"
                             @setUpdateStamp="setUpdateStamp"
+                            @resetStamp="resetStamp"
                         />
                     </div>
                 </template>
@@ -107,6 +107,9 @@ const form = useForm({
 // TODO: 選択した日付の時刻を入力するため、午前0時移行だと失敗する
 // TODO: 午前0時になったらリロードする処理が必要
 function pushNewStamp() {
+    // 新しいスタンプは1人で良い…
+    clearNewStamp();
+
     newStamp.value = {
         id: 0,
         work_id: work.value.id,
@@ -114,9 +117,6 @@ function pushNewStamp() {
         created_at: "",
         updated_at: "",
     };
-
-    // 新しいスタンプは1人で良い…
-    clearNewStamp();
 
     workStamps.value.push(newStamp.value);
 }
@@ -166,17 +166,19 @@ function clearNewStamp() {
     if (newStampIdx != -1) {
         workStamps.value.splice(newStampIdx, 1);
     }
+
+    newStamp.value = null;
 }
 
-// 選択中の新しいスタンプをクリア
-function clearSelectedNewStamp() {
-    setSelectStamp(selectedStamp.value!);
-    clearNewStamp();
-}
 
 // スタンプの更新をクリア
 function clearUpdateStamps() {
     updateStamps.value = {};
+}
+
+// スタンプをブラウザで変更される前の値に戻す
+function resetStamp() {
+
 }
 
 // WorkStampからスタンプ選択の通知を受け取る
