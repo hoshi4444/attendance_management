@@ -35,12 +35,17 @@
             </div>
         </div>
 
-        <!-- 打刻グラフ -->
-        <div class="pt-12 pb-10 px-2">
+        <div class="p-10 px-2" :class="{ 'pt-2 pd-10': !hasWorkStamps }">
+            <!-- スタンプがない場合 -->
+            <div v-if="!hasWorkStamps">
+                <p class="text-2xl font-extrabold text-center text-blue-500">Stamp Me!!</p>
+            </div>
+
+            <!-- 打刻グラフ -->
             <work-sequence ref="workSequence">
                 <template #workStamps>
                     <!-- 打刻スタンプ -->
-                    <div v-if="workStamps && !isReset">
+                    <div v-if="hasWorkStamps && !isReset">
                         <work-stamp
                             v-for="(workStamp, workStampIdx) in workStamps"
                             :key="workStamp.id"
@@ -97,6 +102,7 @@ const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
 // flags
 const isReset = ref<Boolean>(false);
 const isNotSelectedStampOrSelectedNewStamp = computed(() => !selectedStamp.value || selectedStamp.value.id == 0)
+const hasWorkStamps = computed(() => Boolean(workStamps.value.length));
 
 // elms
 const workSequence = ref<typeof WorkSequence | null>(null);

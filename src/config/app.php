@@ -179,6 +179,7 @@ return [
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
         App\Providers\ViteServiceProvider::class,
+        App\Providers\createTodayWorkProvider::class,
     ],
 
     /*

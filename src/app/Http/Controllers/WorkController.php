@@ -18,6 +18,9 @@ class WorkController extends Controller
      */
     public function index()
     {
+        // 当日のデータがなかったら入れる
+        app()->make('createTodayWork');
+
         // 今月の打刻状況を取得
         $works = Work::with('workStamps')
                     ->where('user_id', Auth::id())
