@@ -15,7 +15,7 @@ jobs:
         steps:
             - checkout
             - add_ssh_keys
-            - run: ssh ${USER_NAME}@${HOST_NAME} 'cd /var/www/attendance_management && sudo git pull'
+            - run: ssh -i ${KEY_PATH} ${USER_NAME}@${HOST_NAME} 'cd /var/www/attendance_management && sudo git pull && cd src && npm run build'
  
 workflows:
     version: 2
