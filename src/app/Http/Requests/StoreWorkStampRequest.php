@@ -24,8 +24,8 @@ class StoreWorkStampRequest extends FormRequest
     public function rules()
     {
         return [
-            "work_id" => "required|number",
-            "stamp_at" => "required|string|date_format:H:i:s"
+            "newStamp.work_id" => "required|numeric",
+            "newStamp.stamp_at" => "required|string|date_format:H:i:s"
         ];
     }
 }

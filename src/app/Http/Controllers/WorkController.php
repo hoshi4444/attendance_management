@@ -31,8 +31,6 @@ class WorkController extends Controller
                                 return $work_group->first();
                             });
 
-        Log::debug($works_of_days->toArray());
-
         return Inertia::render('Work/Index',
             [
                 'works_of_days' => $works_of_days

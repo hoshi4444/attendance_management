@@ -13,7 +13,7 @@ class UpdateWorkStampRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,9 @@ class UpdateWorkStampRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "updateStamp.id" => 'required|numeric',
+            "updateStamp.work_id" => 'required|numeric',
+            "updateStamp.stamp_at" => "required|string|date_format:H:i:s",
         ];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreWorkStampRequest;
+use App\Http\Requests\UpdateWorkStampRequest;
 use App\Models\WorkStamp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,14 +13,15 @@ class WorkStampController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreWorkStampRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreWorkStampRequest $request)
     {
+        $new_stamp = collect($request->safe()->only("newStamp"))->first();
         WorkStamp::create([
-            "work_id" => $request->newStamp["work_id"],
-            "stamp_at" => $request->newStamp["stamp_at"],
+            "work_id" => $new_stamp["work_id"],
+            "stamp_at" => $new_stamp["stamp_at"],
         ]);
 
         return back();
@@ -27,13 +30,16 @@ class WorkStampController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Http\Requests\UpdateWorkStampRequest  $request
+     * @param  WorkStamp  $work_stamp
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateWorkStampRequest $request, WorkStamp $work_stamp)
     {
-        //
+        $update_stamp = collect($request->safe()->only("updateStamp"))->first();
+        $work_stamp->stamp_at = $update_stamp["stamp_at"];
+        $work_stamp->save();
+        return back();
     }
 
     /**
