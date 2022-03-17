@@ -174,6 +174,11 @@ function convertPositionPercentageToStampAtStr(positionPercentage: number) {
     const zeroPadMin = String(newMin).padStart(2, "0");
     return `${zeroPadHour}:${zeroPadMin}:00`;
 }
+
+// 時間を元の時間に戻す
+function resetStampAt() {
+
+}
 </script>
 <style scoped>
 .stamp-board {
