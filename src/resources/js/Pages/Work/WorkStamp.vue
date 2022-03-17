@@ -95,7 +95,7 @@ const stampCaption = computed(() => {
     return "Break!";
 });
 
-// スタンプを選択WorkCardに通知する
+// スタンプの選択をWorkCardに通知する
 function setSelectStamp() {
     console.log("select stamp pin");
     emits("setSelectStamp", props.workStamp);

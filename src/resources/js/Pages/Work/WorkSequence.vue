@@ -1,4 +1,4 @@
-<!-- 打刻時刻のグラフ -->
+<!-- 背景のグラフ表示するだけのコンポーネント -->
 <template>
     <!-- 打刻時刻ボード -->
     <div
@@ -6,18 +6,8 @@
         class="flex relative items-end bg-blue-400 border-2 mt-6 h-14 rounded-sm"
     >
         <!-- 打刻スタンプ -->
-        <div v-if="workStamps">
-            <!-- 確実にwork_stampが存在する場合のみ表示される -->
-            <work-stamp-pin
-                v-for="(workStamp, workStampIdx) in workStamps"
-                :workStamp="workStamp"
-                :workStampIdx="workStampIdx"
-                :workStampsLen="workStamps.length"
-                :selectedStamp="selectedStamp"
-                :sequenceElm="sequenceElm"
-                @setSelectStamp="setSelectStamp"
-                @setUpdateStamp="setUpdateStamp"
-            />
+        <div>
+            <slot name="workStamps" />
         </div>
 
         <!-- 1時間間隔メモリ -->
@@ -36,56 +26,14 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import WorkStampPin from './WorkStampPin.vue';
-import { DateTime } from "luxon";
+import { ref } from 'vue';
 
-interface Props {
-    work: Work,
-    selectedStamp: WorkStamp | null
-}
-interface Emits {
-    (e: "setSelectStamp", workStamp: WorkStamp): void,
-    (e: "setUpdateStamp", workStamp: WorkStamp): void
-}
-const props = defineProps<Props>();
-const emits = defineEmits<Emits>();
+const sequenceElm = ref(null);
 
-const sequenceElm = ref<HTMLDivElement | null>(null);
-
-const work = computed(() => props.work);
-const workStamps = computed(() => {
-    if (!work.value.work_stamps) {
-        return null;
-    }
-    if (!work.value.work_stamps.length) {
-        return null
-    }
-
-    // 時刻でソートして返す
-    return work.value.work_stamps.sort((aStamp, bStamp) => {
-        if (DateTime.fromSQL(aStamp.stamp_at) < DateTime.fromSQL(bStamp.stamp_at)) {
-            return -1;
-        } else {
-            return 1;
-        }
-    });
+defineExpose({
+    sequenceElm
 });
-const selectedStamp = computed(() => props.selectedStamp);
-
-// スタンプの選択をWorkCordに通知
-function setSelectStamp(workStamp: WorkStamp) {
-    console.log("select stamp Sequence");
-    emits("setSelectStamp", workStamp);
-}
-
-// スタンプの更新をWorkCordに通知
-function setUpdateStamp(updateStamp: WorkStamp) {
-    console.log("update stamp pin");
-    emits("setUpdateStamp", updateStamp);
-}
 </script>
 <style scoped>
 .hour-memory {

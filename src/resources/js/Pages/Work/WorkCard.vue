@@ -36,12 +36,24 @@
 
         <!-- 打刻グラフ -->
         <div class="pt-12 pb-10 px-2">
-            <work-sequence
-                :work="work"
-                :selectedStamp="selectedStamp"
-                @setSelectStamp="setSelectStamp"
-                @setUpdateStamp="setUpdateStamp"
-            />
+            <work-sequence ref="workSequence">
+                <template #workStamps>
+                    <!-- 打刻スタンプ -->
+                    <div v-if="workStamps">
+                        <work-stamp
+                            v-for="(workStamp, workStampIdx) in workStamps"
+                            :key="workStamp.id"
+                            :workStamp="workStamp"
+                            :workStampIdx="workStampIdx"
+                            :workStampsLen="workStamps.length"
+                            :selectedStamp="selectedStamp"
+                            :sequenceElm="sequenceElm"
+                            @setSelectStamp="setSelectStamp"
+                            @setUpdateStamp="setUpdateStamp"
+                        />
+                    </div>
+                </template>
+            </work-sequence>
         </div>
     </div>
 </template>
@@ -49,12 +61,14 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import WorkSequence from './WorkSequence.vue';
+import WorkStamp from './WorkStamp.vue';
 import WorkStampRedButton from './WorkStampRedButton.vue';
 import WorkStampGreenButton from './WorkStampGreenButton.vue';
 import WorkStampBlueButton from './WorkStampBlueButton.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 import { DateTime } from "luxon";
 
+// props
 interface Props {
     work: Work,
     day: String
@@ -72,10 +86,17 @@ const workStamps = computed(() => {
     });
 });
 
+// vars
 const newStamp = ref<WorkStamp | null>(null)
 const selectedStamp = ref<WorkStamp | null>(null);
 // 更新したスタンプ・一意にするためIDをキーのオブジェクトにする
 const updateStamps = ref<{ [workStampId: number]: WorkStamp }>({});
+const workSequence = ref<typeof WorkSequence | null>(null);
+const sequenceElm = computed(() => {
+    if (!workSequence.value) return;
+    return workSequence.value.sequenceElm;
+});
+
 
 const form = useForm({
     newStamp: <WorkStamp>{},
@@ -158,7 +179,7 @@ function clearUpdateStamps() {
     updateStamps.value = {};
 }
 
-// WorkStampPinからSequenceを経由してスタンプ選択の通知を受け取る
+// WorkStampからスタンプ選択の通知を受け取る
 // 同じスタンプが渡されたら解除する
 function setSelectStamp(selectStamp: WorkStamp) {
     console.log("Select Stamp Card");
@@ -170,7 +191,7 @@ function setSelectStamp(selectStamp: WorkStamp) {
     }
 }
 
-// WorkStampPinからSequenceを経由してスタンプ更新の通知を受け取る
+// WorkStampからスタンプ更新の通知を受け取る
 // オブジェクトに格納する
 function setUpdateStamp(updateStamp: WorkStamp) {
     console.log("Update Stamp Card");
