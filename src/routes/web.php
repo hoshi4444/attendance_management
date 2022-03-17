@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\WorkController;
+use App\Http\Controllers\WorkStampController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,6 +26,17 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->name('dashboard');
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
+
+    // 勤務日のルーティング
+    Route::resource('/works', WorkController::class)
+        ->only(["index", "store", "update", "destroy"]);
+    Route::get('/home', [WorkController::class, 'index'])->name('home');
+
+    // 打刻時刻のルーティング
+    Route::resource('/work_stamps', WorkStampController::class)
+        ->only(["store", "update", "destroy"]);
+});
