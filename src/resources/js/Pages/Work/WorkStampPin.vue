@@ -5,7 +5,7 @@
         class="stamp-board"
         :class="{ 'select-stamp-board': isSelected }"
         :style="`left: ${setLeftPosition}%`"
-        @click="selectStamp()"
+        @click="setSelectStamp()"
         @mousedown.prevent="mouseDown()"
         @mouseup.prevent="mouseUp()"
         @mouseout="mouseUp()"
@@ -76,11 +76,16 @@ const stampCaption = computed(() => {
     return "Break!";
 });
 
-// スタンプを選択する
-// WorkCardまで飛ばす
-function selectStamp() {
+// スタンプを選択WorkCardに通知する
+function setSelectStamp() {
     console.log("select stamp pin");
-    emits("selectStamp", props.workStamp);
+    emits("setSelectStamp", props.workStamp);
+}
+
+// スタンプの更新をWorkCardに通知する
+function setUpdateStamp() {
+    console.log("update stamp pin");
+    emits("setUpdateStamp", updateStamp.value!);
 }
 
 function mouseDown() {

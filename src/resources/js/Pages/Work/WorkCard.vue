@@ -26,7 +26,12 @@
 
         <!-- 打刻グラフ -->
         <div class="pt-12 pb-10 px-2">
-            <work-sequence :work="work" :selectedStamp="selectedStamp" @selectStamp="selectStamp" />
+            <work-sequence
+                :work="work"
+                :selectedStamp="selectedStamp"
+                @setSelectStamp="setSelectStamp"
+                @setUpdateStamp="setUpdateStamp"
+            />
         </div>
     </div>
 </template>
@@ -106,21 +111,28 @@ function clearNewStamp() {
 
 // 選択中の新しいスタンプをクリア
 function clearSelectedNewStamp() {
-    selectStamp(selectedStamp.value!);
+    setSelectStamp(selectedStamp.value!);
     clearNewStamp();
 }
 
 
-// スタンプを選択する
+// WorkStampPinからSequenceを経由してスタンプ選択の通知を受け取る
 // 同じスタンプが渡されたら解除する
-// WorkStampPinで発火してSequenceを経由する
-function selectStamp(workStamp: WorkStamp) {
-    console.log("select stamp Card");
-    if (selectedStamp.value && selectedStamp.value.id == workStamp.id) {
-        console.log("select clear");
+function setSelectStamp(selectStamp: WorkStamp) {
+    console.log("Select Stamp Card");
+    if (selectedStamp.value && selectedStamp.value.id == selectStamp.id) {
+        console.log("Select Clear");
         selectedStamp.value = null;
     } else {
-        selectedStamp.value = workStamp;
+        selectedStamp.value = selectStamp;
     }
+}
+
+// WorkStampPinからSequenceを経由してスタンプ更新の通知を受け取る
+// オブジェクトに格納する
+function setUpdateStamp(updateStamp: WorkStamp) {
+    console.log("Update Stamp Card");
+    const workStampId: number = Number(updateStamp.id);
+    updateStamps.value[workStampId] = updateStamp;
 }
 </script>

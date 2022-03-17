@@ -15,7 +15,8 @@
                 :workStampsLen="workStamps.length"
                 :selectedStamp="selectedStamp"
                 :sequenceElm="sequenceElm"
-                @selectStamp="selectStamp"
+                @setSelectStamp="setSelectStamp"
+                @setUpdateStamp="setUpdateStamp"
             />
         </div>
 
@@ -46,7 +47,8 @@ interface Props {
     selectedStamp: WorkStamp | null
 }
 interface Emits {
-    (e: "selectStamp", workStamp: WorkStamp): void
+    (e: "setSelectStamp", workStamp: WorkStamp): void,
+    (e: "setUpdateStamp", workStamp: WorkStamp): void
 }
 const props = defineProps<Props>();
 const emits = defineEmits<Emits>();
@@ -73,9 +75,16 @@ const workStamps = computed(() => {
 });
 const selectedStamp = computed(() => props.selectedStamp);
 
-function selectStamp(workStamp: WorkStamp) {
+// スタンプの選択をWorkCordに通知
+function setSelectStamp(workStamp: WorkStamp) {
     console.log("select stamp Sequence");
-    emits("selectStamp", workStamp);
+    emits("setSelectStamp", workStamp);
+}
+
+// スタンプの更新をWorkCordに通知
+function setUpdateStamp(updateStamp: WorkStamp) {
+    console.log("update stamp pin");
+    emits("setUpdateStamp", updateStamp);
 }
 </script>
 <style scoped>
