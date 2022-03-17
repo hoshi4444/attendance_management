@@ -22,7 +22,7 @@
                                 <jet-nav-link
                                     :href="route('home')"
                                     :active="route().current('home')"
-                                >Dashboard</jet-nav-link>
+                                >Work Board</jet-nav-link>
                             </div>
                         </div>
 

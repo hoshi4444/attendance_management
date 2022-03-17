@@ -1,5 +1,5 @@
 <template>
-    <app-layout title="Dashboard">
+    <app-layout title="Work Board">
         <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- 打刻状況カード -->
             <div v-if="worksOfDays" class="space-y-4 sm:rounded-lg">
