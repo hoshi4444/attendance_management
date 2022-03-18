@@ -130,8 +130,9 @@ function postNewStamp() {
 
     form.post('/work_stamps', {
         onSuccess: () => newStamp.value = null,
-        onError: () => {
-            alert("エラーが発生しました");
+        onError: e => {
+            alert(`エラーが発生しました`);
+            console.error(e);
         }
     });
 }
@@ -149,8 +150,9 @@ function updateSelectedStamp() {
             setSelectStamp(form.updateStamp);
             clearUpdateStamps();
         },
-        onError: () => {
-            alert("エラーが発生しました");
+        onError: e => {
+            alert(`エラーが発生しました`);
+            console.error(e);
         }
     });
 }
@@ -163,8 +165,9 @@ function deleteSelectedStamp() {
         onSuccess: () => {
             selectedStamp.value = null;
         },
-        onError: () => {
-            alert("エラーが発生しました");
+        onError: e => {
+            alert(`エラーが発生しました`);
+            console.error(e);
         }
     });
 }
@@ -180,7 +183,7 @@ function pushNewStamp() {
     newStamp.value = {
         id: 0,
         work_id: work.value.id,
-        stamp_at: DateTime.now().toFormat('H:m:s'),
+        stamp_at: DateTime.now().toFormat('HH:mm:ss'),
         created_at: "",
         updated_at: "",
     };
